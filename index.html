@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>STRATH VB Soundboard</title>
+  <style>
+    button.active {
+  background-color: #c8e6c9; /* light green */
+}
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { font-size: 22px; margin-bottom: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    button { padding: 18px; font-size: 18px; border-radius: 12px; border: 1px solid #ddd; cursor: pointer; }
+    button:active { transform: scale(0.98); }
+    .status { margin-top: 14px; font-size: 14px; opacity: 0.8; }
+
+.stop-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #e53935;
+  color: white;
+  font-weight: bold;
+  padding: 20px 26px;
+  border-radius: 50px;
+}
+  </style>
+</head>
+<body>
+  <h1>STRATH VB Soundboard</h1>
+
+  <div class="grid">
+  <button data-sound="sounds/ace.mp3">ACE</button>
+  <button data-sound="sounds/block.mp3">BLOCK</button>
+  <button data-sound="sounds/spike.mp3">SPIKE</button>
+
+  <button data-sound="sounds/7 nation army.mp3">7 NATION ARMY</button>
+  <button data-sound="sounds/lets go strathclyde.mp3">LET’S GO STRATH</button>
+  <button data-sound="sounds/happy 2 clap.mp3">HAPPY CLAP</button>
+  <button data-sound="sounds/2 claps.mp3">2 CLAPS</button>
+  <button data-sound="sounds/happy timeout.mp3">HAPPY TIMEOUT</button>
+  <button data-sound="sounds/speak no americano.mp3">AMERICANO</button>
+
+  <button data-sound="sounds/hype.mp3">HYPE</button>
+  <button data-sound="sounds/high beats.mp3">HIGH BEATS</button>
+  <button data-sound="sounds/mimosa.mp3">MIMOSA</button>
+
+  
+  <button data-sound="sounds/macarena timeout.mp3">MACARENA</button>
+  <button data-sound="sounds/timeout 1.mp3">TIMEOUT</button>
+
+  
+  
+  <button data-sound="sounds/rock u.mp3">WE WILL ROCK YOU</button>
+
+  <button data-sound="sounds/albatrozzzzz.mp3">ALBATROZZ</button>
+
+  <button id="stopAll">STOP</button>
+</div>
+
+  <div class="status" id="status">Ready.</div>
+
+  <script>
+    let currentAudio = null;
+    let currentBtn = null;
+    const statusEl = document.getElementById("status");
+
+    function stopCurrent() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+       if (currentBtn) {
+    currentBtn.classList.remove("active");
+  }
+      currentAudio = null;
+      currentBtn = null;
+    }
+
+    document.querySelectorAll("button[data-sound]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const src = btn.getAttribute("data-sound");
+
+        if (currentBtn === btn) {
+          stopCurrent();
+          statusEl.textContent = "Stopped.";
+          return;
+        }
+
+        stopCurrent();
+
+        const audio = new Audio(src);
+        currentAudio = audio;
+        currentBtn = btn;
+        btn.classList.add("active");
+
+        try {
+          await audio.play();
+          statusEl.textContent = "Playing: " + btn.textContent;
+        } catch (e) {
+          statusEl.textContent = "Click again if browser blocked audio.";
+        }
+
+        audio.addEventListener("ended", () => {
+  if (currentAudio === audio) {
+    btn.classList.remove("active");
+    currentAudio = null;
+    currentBtn = null;
+    statusEl.textContent = "Ready.";
+  }
+});
+      });
+    });
+
+    document.getElementById("stopAll").addEventListener("click", () => {
+      stopCurrent();
+      statusEl.textContent = "Stopped.";
+    });
+  </script>
+</body>
+</html>
